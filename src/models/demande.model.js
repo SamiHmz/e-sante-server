@@ -38,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     models.Demande.belongsTo(models.User, {
       foreignKey: { name: "user_id" },
     });
+    models.Demande.hasOne(models.Consultation, { foreignKey: "demande_id" });
   };
 
   return Demande;

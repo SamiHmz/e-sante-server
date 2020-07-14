@@ -156,10 +156,6 @@ UserController.auth = async (req, res) => {
   /****************************check the password **************************/
 
   const validatePassword = await bcrypt.compare(body.pass, user.pass);
-  console.log(body.pass);
-  console.log(user.dataValues);
-  console.log(validatePassword);
-
   if (!validatePassword) return res.status(400).send(" email or password");
 
   /**************************** **************************/

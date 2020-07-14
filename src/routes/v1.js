@@ -8,11 +8,16 @@ const WilayaController = require("../contollers/wilaya.controller");
 const ComuneController = require("../contollers/comune.controller");
 const SpecialiteController = require("../contollers/specialite.controller");
 const DemandeController = require("../contollers/demande.controller");
+const ConsultationController = require("../contollers/consultation.controller");
 
 /*********************** User routes ************************/
 //(type : "patient" or "medecin")
 router.post("/user/register/:type", UserController.createNewUser);
 router.post("/user/login/:type", UserController.auth);
+/*********************** Wilaya routes ************************/
+router.get("/wilaya", WilayaController.getAllWilaya);
+/*********************** comune routes ************************/
+router.get("/comune/:id", ComuneController.getAllComune);
 
 /************************Authentification ************************/
 router.use(auth);
@@ -20,12 +25,11 @@ router.use(auth);
 /************************Demandes ************************/
 router.post("/demande", DemandeController.CreateDemande);
 router.get("/demande", DemandeController.getAllDemandes);
+router.put("/demande/:id", DemandeController.updateDemande);
 
-/*********************** Wilaya routes ************************/
-router.get("/wilaya", WilayaController.getAllWilaya);
-
-/*********************** comune routes ************************/
-router.get("/comune/:id", ComuneController.getAllComune);
+/*********************** consultation ************************/
+router.post("/consultation", ConsultationController.createConsultation);
+router.get("/consultation", ConsultationController.getAllConsultation);
 
 /*********************** comune routes ************************/
 router.get("/specialite", SpecialiteController.getAllSpecialite);

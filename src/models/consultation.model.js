@@ -9,15 +9,15 @@ module.exports = (sequelize, DataTypes) => {
       },
       diagnostic: {
         type: DataTypes.STRING,
+        allowNull: false,
         validate: {
-          allowNull: false,
           notEmpty: true,
         },
       },
       traitemnet: {
         type: DataTypes.STRING,
+        allowNull: false,
         validate: {
-          allowNull: false,
           notEmpty: true,
         },
       },
@@ -25,14 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     { tableName: "consultation" }
   );
 
-  Consultation.associate = function (models) {
-    models.Consultation.belongsTo(models.Medecin, {
-      foreignKey: { name: "medecin_id" },
-    });
-    models.Consultation.belongsTo(models.User, {
-      foreignKey: { name: "user_id" },
-    });
-  };
+  Consultation.associate = function (models) {};
 
   return Consultation;
 };
