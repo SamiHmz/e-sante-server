@@ -1,5 +1,6 @@
 const { Consultation, Demande, sequelize } = require("../models");
 const Joi = require("@hapi/joi");
+const _ = require("lodash");
 
 const ConsultationController = {};
 
@@ -7,6 +8,11 @@ const schema = Joi.object({
   diagnostic: Joi.string().required(),
   traitemnet: Joi.string().required(),
   demande_id: Joi.number().required(),
+});
+
+const updateShema = Joi.object({
+  diagnostic: Joi.string().required(),
+  traitemnet: Joi.string().required(),
 });
 
 // creating consultation
@@ -71,6 +77,78 @@ ConsultationController.getAllConsultation = async (req, res) => {
         where d.medecin_id =  ${user.id};`);
     }
     res.send(listConsultation[0]);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// update
+ConsultationController.updateConsultation = async (req, res) => {
+  const { body, user } = req;
+  if (user.type == "patient")
+    return res.status(401).send("your not authorised to modifiy demande");
+
+  /**************** data validation *******************/
+
+  const result = updateShema.validate(body);
+
+  if (result.error)
+    return res.status(404).send(result.error.details[0].message);
+
+  /******************cheking if consultation  exits ******************/
+
+  let consultation = await Consultation.findOne({
+    where: {
+      id: req.params.id,
+    },
+    inculde: {
+      model: Demande,
+      where: { medecin_id: user.id },
+    },
+  });
+  if (!consultation) return res.status(404).send("consultation  not found");
+
+  /*****************************************/
+  try {
+    consultation = await Consultation.findByPk(req.params.id);
+    consultation.diagnostic = body.diagnostic;
+    consultation.traitemnet = body.traitemnet;
+
+    await consultation.save();
+    res.send(consultation);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// delete consultation
+ConsultationController.deleteConsultation = async (req, res) => {
+  const { user } = req;
+  /****************** check if consultation exits ********************/
+
+  if (user.type == "patient") {
+    var consultation = await Consultation.findOne({
+      where: { id: req.params.id },
+      inculde: {
+        model: Demande,
+        where: { user_id: user.id },
+      },
+    });
+  } else {
+    var consultation = await Consultation.findOne({
+      where: { id: req.params.id },
+      inculde: {
+        model: Demande,
+        where: { medecin_id: user.id },
+      },
+    });
+  }
+  if (!consultation) return res.status(404).send("consultation not founded");
+
+  try {
+    consultation = await Consultation.findByPk(req.params.id);
+    await consultation.destroy();
+    res.send(consultation);
   } catch (error) {
     console.log(error);
   }

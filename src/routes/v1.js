@@ -26,10 +26,13 @@ router.use(auth);
 router.post("/demande", DemandeController.CreateDemande);
 router.get("/demande", DemandeController.getAllDemandes);
 router.put("/demande/:id", DemandeController.updateDemande);
+router.delete("/demande/:id", DemandeController.deleteDemande);
 
 /*********************** consultation ************************/
 router.post("/consultation", ConsultationController.createConsultation);
 router.get("/consultation", ConsultationController.getAllConsultation);
+router.put("/consultation/:id", ConsultationController.updateConsultation);
+router.delete("/consultation/:id", ConsultationController.deleteConsultation);
 
 /*********************** comune routes ************************/
 router.get("/specialite", SpecialiteController.getAllSpecialite);

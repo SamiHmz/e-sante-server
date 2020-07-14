@@ -78,6 +78,8 @@ DemandeController.getAllDemandes = async (req, res) => {
 DemandeController.updateDemande = async (req, res) => {
   const { body } = req;
 
+  if (req.user.type == "medecin")
+    return res.status(401).send("your not authorised to modifiy demande");
   const updateSchema = _.omit(schema, ["medecin_id"]);
   /**************** data validation *******************/
 
@@ -108,5 +110,26 @@ DemandeController.updateDemande = async (req, res) => {
 };
 
 // delete demande
+
+DemandeController.deleteDemande = async (req, res) => {
+  const { user } = req;
+  if (user.type == "medecin")
+    return res.status(402).send("your not allowed to delete demande");
+
+  /****************** check if consultation exits ********************/
+  console.log(user);
+  var demande = await Demande.findOne({
+    where: { id: req.params.id, user_id: user.id },
+  });
+
+  if (!demande) return res.status(404).send("demande not founded");
+
+  try {
+    await demande.destroy();
+    res.send(demande);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = DemandeController;
