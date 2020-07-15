@@ -72,6 +72,31 @@ DemandeController.getAllDemandes = async (req, res) => {
   }
 };
 
+DemandeController.getOneDemande = async (req, res) => {
+  const { user } = req;
+  console.log(req.params.id);
+  console.log(user.id);
+  try {
+    if (user.type === "patient") {
+      var demandes = await sequelize.query(`select m.nom,m.prenom,d.id,d.symptomes,d.autre_symptomes,d.traitement,d.image,d.is_treated,d."createdAt" from demande d 
+      join medecin m 
+      on m.id = d.medecin_id
+      where (d.user_id = ${user.id} and d.id = ${req.params.id}) `);
+    } else {
+      var demandes = await sequelize.query(`
+      select u.nom,u.prenom,d.id,d.symptomes,d.autre_symptomes,d.traitement,d.image,d.is_treated,d."createdAt" from demande d 
+      join utilisateur u 
+      on d.user_id = u.id 
+      where d.medecin_id = ${user.id} and  d.id = ${req.params.id};`);
+    }
+    if (demandes[0].length === 0)
+      return res.status(404).send("this demande do not exist");
+    res.send(demandes[0]);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 /***************************************************************************************************************/
 // update demande
 

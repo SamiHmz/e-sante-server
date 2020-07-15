@@ -25,6 +25,7 @@ router.use(auth);
 /************************Demandes ************************/
 router.post("/demande", DemandeController.CreateDemande);
 router.get("/demande", DemandeController.getAllDemandes);
+router.get("/demande/:id", DemandeController.getOneDemande);
 router.put("/demande/:id", DemandeController.updateDemande);
 router.delete("/demande/:id", DemandeController.deleteDemande);
 
